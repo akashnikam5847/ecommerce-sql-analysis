@@ -65,7 +65,12 @@ FROM order_payments
 GROUP BY payment_type
 ORDER BY total_value DESC;
 
--- (fill from your result: which payment type has the highest share, e.g. "credit_card is __% of total value")
+-- Credit card dominates: 78.34% of total payment value (~12.54M across 76,505 orders).
+-- Boleto (a Brazilian bank-slip payment) is second at 17.92%; credit card + boleto together make ~96%.
+-- Voucher (2.37%) and debit card (1.36%) are marginal.
+-- Note: this query covers all order statuses and includes freight in payment_value,
+-- so the total is higher than the delivered-orders item revenue in Query 1.
+-- Orders per type add up to more than the total order count because one order can use multiple payment types.
 
 -- Query 5: Monthly revenue aur MoM growth
 
@@ -103,7 +108,11 @@ FROM orders
 WHERE order_status = 'delivered'
   AND order_delivered_customer_date IS NOT NULL;
 
--- (fill from your result: avg actual delivery days vs avg estimated days, and late_pct)
+-- Delivered orders reach customers in ~12.5 days on average, while the estimated delivery time was ~24.4 days,
+-- so Olist sets conservative delivery estimates (about 12 days of buffer).
+-- Even so, 7,826 orders (8.11%) arrived after the estimated date.
+-- These late orders are the ones with much lower review scores (see Query 8: 2.57 vs 4.29).
+-- Note: 96,470 orders are used here (8 fewer than Query 1) because 8 delivered orders have no delivery date.
 
   -- Query 7: Top 10 sellers, revenue aur average review
 
